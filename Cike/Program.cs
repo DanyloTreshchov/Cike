@@ -10,6 +10,7 @@ namespace Cike
     {
         static void Main(string[] args)
         {
+            TestGame testGame = new TestGame();
         }
     }
 }
