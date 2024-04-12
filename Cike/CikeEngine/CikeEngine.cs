@@ -7,6 +7,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.Threading;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
+using System.Reflection;
 
 namespace Cike.CikeEngine
 {
@@ -26,10 +27,12 @@ namespace Cike.CikeEngine
 
         public Color backgroundColor = Color.White;
 
-        public float deltaTime = 0;
+        public static float deltaTime = 0;
         
 
         public static List<GameObject> gameObjects = new List<GameObject>();
+
+        public static List<Script> scripts = new List<Script>();
 
         public CikeEngine(Vector2D screenSize, string title)
         {
@@ -41,11 +44,21 @@ namespace Cike.CikeEngine
             window.Text = title;
             window.Paint += Renderer;
 
+            window.FormBorderStyle = FormBorderStyle.FixedSingle;
+            window.MaximizeBox = false;
+
             window.MouseMove += Input.MouseMoveInputEvent;
             window.MouseDown += Input.MouseButtonDownInputEvent;
             window.MouseUp += Input.MouseButtonUpInputEvent;
             window.KeyDown += Input.KeyboardButtonDownEvent;
             window.KeyUp += Input.KeyboardButtonUpEvent;
+
+            scripts = ReflectiveEnumerator.GetEnumerableOfType<Script>().ToList();
+
+            foreach (Script script in scripts)
+            {
+                script.PassFunctionsToEngine(); // Look up the Script class (method to pass the OnLoad, OnUpdate and OnDraw methods)
+            }
 
             gameLoopThread = new Thread(GameLoop);
             gameLoopThread.Start();
@@ -55,18 +68,18 @@ namespace Cike.CikeEngine
 
         void GameLoop()
         {
-            OnLoad();
+            onLoad();
             DateTime startTime = DateTime.Now;
             while (gameLoopThread.IsAlive)
             {
                 try
                 {
-                    OnDraw();
+                    onDraw();
                     window.BeginInvoke((MethodInvoker)delegate { window.Refresh(); });
                     DateTime endTime = DateTime.Now;
                     TimeSpan timeSpan = endTime - startTime;
                     deltaTime = (float)timeSpan.TotalMilliseconds;
-                    OnUpdate();
+                    onUpdate();
                     startTime = DateTime.Now;
                     Thread.Sleep(1);
                 }
@@ -102,11 +115,27 @@ namespace Cike.CikeEngine
             }
         }
 
-        public abstract void OnLoad();
+        public delegate void OnLoad();
+        private static OnLoad onLoad;
+        public delegate void OnUpdate();
+        private static OnUpdate onUpdate;
+        public delegate void OnDraw();
+        private static OnDraw onDraw;
 
-        public abstract void OnUpdate();
+        public static void GetOnLoad(OnLoad onLoadVoid)
+        {
+            onLoad += onLoadVoid;
+        }
 
-        public abstract void OnDraw();
+        public static void GetOnUpdate(OnUpdate onUpdateVoid)
+        {
+            onUpdate += onUpdateVoid;
+        }
+
+        public static void GetOnDraw(OnDraw onDrawVoid)
+        {
+            onDraw += onDrawVoid;
+        }
 
         public static GameObject CreateGameObject()
         {
@@ -143,6 +172,24 @@ namespace Cike.CikeEngine
         public static void RemoveGameObject(GameObject obj)
         {
             gameObjects.Remove(obj);
+        }
+    }
+
+    public static class ReflectiveEnumerator
+    {
+        static ReflectiveEnumerator() { }
+
+        public static IEnumerable<T> GetEnumerableOfType<T>(params object[] constructorArgs) where T : class, IComparable<T>
+        {
+            List<T> objects = new List<T>();
+            foreach (Type type in
+                Assembly.GetAssembly(typeof(T)).GetTypes()
+                .Where(myType => myType.IsClass && !myType.IsAbstract && myType.IsSubclassOf(typeof(T))))
+            {
+                objects.Add((T)Activator.CreateInstance(type, constructorArgs));
+            }
+            objects.Sort();
+            return objects;
         }
     }
 }
