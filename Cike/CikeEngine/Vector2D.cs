@@ -9,19 +9,19 @@ namespace Cike.CikeEngine
 {
     public class Vector2D
     {
-        public float X { get; set; }
-        public float Y { get; set; }
+        public float x { get; set; }
+        public float y { get; set; }
 
         public Vector2D()
         {
-            this.X = Zero().X;
-            this.Y = Zero().Y;
+            this.x = Zero().x;
+            this.y = Zero().y;
         }
 
         public Vector2D(float x, float y)
         {
-            this.X = x;
-            this.Y = y;
+            this.x = x;
+            this.y = y;
         }
 
         public static Vector2D Zero()
@@ -33,32 +33,32 @@ namespace Cike.CikeEngine
 
         public static Vector2D operator -(Vector2D v1, Vector2D v2)
         {
-            return new Vector2D(v1.X - v2.X, v1.Y - v2.Y);
+            return new Vector2D(v1.x - v2.x, v1.y - v2.y);
         }
 
         public static Vector2D operator +(Vector2D v1, Vector2D v2)
         {
-            return new Vector2D(v1.X + v2.X, v1.Y + v2.Y);
+            return new Vector2D(v1.x + v2.x, v1.y + v2.y);
         }
 
         public static Vector2D operator *(Vector2D v1, Vector2D v2)
         {
-            return new Vector2D(v1.X * v2.X, v1.Y * v2.Y);
+            return new Vector2D(v1.x * v2.x, v1.y * v2.y);
         }
 
         public static Vector2D operator *(Vector2D v, float scalar)
         {
-            return new Vector2D(v.X * scalar, v.Y * scalar);
+            return new Vector2D(v.x * scalar, v.y * scalar);
         }
 
         public static Vector2D operator /(Vector2D v, float scalar)
         {
-            return new Vector2D(v.X / scalar, v.Y / scalar);
+            return new Vector2D(v.x / scalar, v.y / scalar);
         }
 
         public float Magnitude()
         {
-            return (float)Math.Sqrt(X * X + Y * Y);
+            return (float)Math.Sqrt(x * x + y * y);
         }
 
         public Vector2D Normaize()

@@ -48,6 +48,13 @@
     <Compile Include="CikeEngine\CikeEngine.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="CikeEngine\Circle2D.cs" />
+    <Compile Include="CikeEngine\GameObject.cs" />
+    <Compile Include="CikeEngine\Line2D.cs" />
+    <Compile Include="CikeEngine\Shape2D.cs" />
+    <Compile Include="CikeEngine\Sprite2D.cs" />
+    <Compile Include="CikeEngine\Square2D.cs" />
+    <Compile Include="CikeEngine\Transform.cs" />
     <Compile Include="CikeEngine\Vector2D.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -56,6 +63,8 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="bin\Debug\Graphics\Sprites\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

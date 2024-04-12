@@ -25,13 +25,15 @@ namespace Cike.CikeEngine
 
         public Color backgroundColor = Color.White;
 
+        public static List<GameObject> gameObjects = new List<GameObject>();
+
         public CikeEngine(Vector2D screenSize, string title)
         {
             this.screenSize = screenSize;
             this.title = title;
 
             this.window = new Canvas();
-            window.Size = new Size((int)screenSize.X, (int)screenSize.Y);
+            window.Size = new Size((int)screenSize.x, (int)screenSize.y);
             window.Text = title;
             window.Paint += Renderer;
 
@@ -64,6 +66,13 @@ namespace Cike.CikeEngine
         {
             Graphics g = e.Graphics;
             g.Clear(backgroundColor);
+
+            List<GameObject> tempGameObjects = new List<GameObject>(CikeEngine.gameObjects);
+
+            foreach(GameObject obj in tempGameObjects)
+            {
+                obj.Draw(g);
+            }
         }
 
         public abstract void OnLoad();
@@ -71,5 +80,42 @@ namespace Cike.CikeEngine
         public abstract void OnUpdate();
 
         public abstract void OnDraw();
+
+        public static GameObject CreateGameObject()
+        {
+            GameObject obj = new GameObject();
+            AddGameObject(obj);
+            return obj;
+        }
+
+        public static GameObject CreateGameObject(Shape2D shape)
+        {
+            GameObject obj = new GameObject(shape);
+            AddGameObject(obj);
+            return obj;
+        }
+
+        public static GameObject CreateGameObject(Vector2D position, Shape2D shape)
+        {
+            GameObject obj = new GameObject(position, shape);
+            AddGameObject(obj);
+            return obj;
+        }
+
+        public static GameObject CreateGameObject(Transform transform, Shape2D shape)
+        {
+            GameObject obj = new GameObject(transform, shape);
+            AddGameObject(obj);
+            return obj;
+        }
+        public static void AddGameObject(GameObject obj)
+        {
+            gameObjects.Add(obj);
+        }
+
+        public static void RemoveGameObject(GameObject obj)
+        {
+            gameObjects.Remove(obj);
+        }
     }
 }
