@@ -6,16 +6,21 @@ using System.Threading.Tasks;
 using Cike.CikeEngine;
 using System.Drawing;
 using System.Security.Cryptography.X509Certificates;
+using System.Windows.Forms;
 
 namespace Cike
 {
     class TestGame : CikeEngine.CikeEngine
     {
+        public Random r = new Random();
+
         public TestGame() : base (new Vector2D(512, 512), "TestGame") { }
 
         public GameObject player = new GameObject();
 
         public int i = 0;
+
+        CikeEngine.Input input = new CikeEngine.Input();
 
         public override void OnDraw()
         {
@@ -31,11 +36,35 @@ namespace Cike
 
         public override void OnUpdate()
         {
-            player.transform.position.x += 1;
-            player.transform.rotation += 1;
-
-            GameObject gameObject = CikeEngine.CikeEngine.CreateGameObject(player.transform, new Circle2D(Color.Black, Color.Black));
-            Console.WriteLine(CikeEngine.CikeEngine.gameObjects.Count());
+            Vector2D movement = new Vector2D();
+            
+            if (Input.KeyButtonDown(Keys.W))
+            {
+                movement.y -= 1;
+            }
+            if (Input.KeyButtonDown(Keys.S))
+            {
+                movement.y += 1;
+            }
+            if (Input.KeyButtonDown(Keys.A))
+            {
+                movement.x -= 1;
+            }
+            if (Input.KeyButtonDown(Keys.D))
+            {
+                movement.x += 1;
+            }
+            movement = movement.Normaize();
+            Vector2D prevPos = player.transform.position;
+            player.transform.position += movement * deltaTime;
+            Vector2D newPos = player.transform.position;
+            float speed = (newPos - prevPos).Magnitude();
+            Vector2D mousePos = Input.GetLocalMousePos();
+            float angle = (float)(Math.Atan2(mousePos.y - player.transform.position.y, mousePos.x - player.transform.position.x) * 180 / Math.PI);
+            Console.WriteLine(angle);
+            player.transform.rotation = angle;
+            Console.WriteLine(speed);
+            float fps = 1 / deltaTime * 1000;
         }
     }
 }

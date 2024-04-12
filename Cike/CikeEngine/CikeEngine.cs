@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Threading;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace Cike.CikeEngine
 {
@@ -25,6 +26,9 @@ namespace Cike.CikeEngine
 
         public Color backgroundColor = Color.White;
 
+        public float deltaTime = 0;
+        
+
         public static List<GameObject> gameObjects = new List<GameObject>();
 
         public CikeEngine(Vector2D screenSize, string title)
@@ -37,6 +41,12 @@ namespace Cike.CikeEngine
             window.Text = title;
             window.Paint += Renderer;
 
+            window.MouseMove += Input.MouseMoveInputEvent;
+            window.MouseDown += Input.MouseButtonDownInputEvent;
+            window.MouseUp += Input.MouseButtonUpInputEvent;
+            window.KeyDown += Input.KeyboardButtonDownEvent;
+            window.KeyUp += Input.KeyboardButtonUpEvent;
+
             gameLoopThread = new Thread(GameLoop);
             gameLoopThread.Start();
 
@@ -46,13 +56,18 @@ namespace Cike.CikeEngine
         void GameLoop()
         {
             OnLoad();
+            DateTime startTime = DateTime.Now;
             while (gameLoopThread.IsAlive)
             {
                 try
                 {
                     OnDraw();
                     window.BeginInvoke((MethodInvoker)delegate { window.Refresh(); });
+                    DateTime endTime = DateTime.Now;
+                    TimeSpan timeSpan = endTime - startTime;
+                    deltaTime = (float)timeSpan.TotalMilliseconds;
                     OnUpdate();
+                    startTime = DateTime.Now;
                     Thread.Sleep(1);
                 }
                 catch
@@ -67,9 +82,21 @@ namespace Cike.CikeEngine
             Graphics g = e.Graphics;
             g.Clear(backgroundColor);
 
-            List<GameObject> tempGameObjects = new List<GameObject>(CikeEngine.gameObjects);
+            List<GameObject> tempGameObjects;
 
-            foreach(GameObject obj in tempGameObjects)
+            lock (CikeEngine.gameObjects)
+            {
+                try
+                {
+                    tempGameObjects = gameObjects.ToList();
+                }
+                catch (ArgumentException)
+                {
+                    return;
+                }
+            }
+
+            foreach (GameObject obj in tempGameObjects)
             {
                 obj.Draw(g);
             }

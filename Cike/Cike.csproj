@@ -14,7 +14,7 @@
     <Deterministic>true</Deterministic>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
+    <PlatformTarget>x64</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -50,6 +50,7 @@
     </Compile>
     <Compile Include="CikeEngine\Circle2D.cs" />
     <Compile Include="CikeEngine\GameObject.cs" />
+    <Compile Include="CikeEngine\Input.cs" />
     <Compile Include="CikeEngine\Line2D.cs" />
     <Compile Include="CikeEngine\Shape2D.cs" />
     <Compile Include="CikeEngine\Sprite2D.cs" />
