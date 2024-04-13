@@ -7,11 +7,14 @@ using Cike.CikeEngine;
 
 namespace Cike
 {
-    public class Player : GameObject
+    public class MainScene : CikeEngine.Scene
     {
-        public Player() : base(new Transform(new Vector2D(100, 100)), new Sprite2D())
+        public override void Initialize()
         {
-            scripts.Add(new PlayerScript());
+            gameObjects.Add(new Player());
+
+            base.Initialize();
         }
+
     }
 }

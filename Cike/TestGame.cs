@@ -14,8 +14,7 @@ namespace Cike
     {
         public Random r = new Random();
 
-        public TestGame() : base (new Vector2D(512, 512), "TestGame") { }
-
+        public TestGame() : base (new Vector2D(512, 512), "TestGame", new MainScene()) { }
         
     }
 }

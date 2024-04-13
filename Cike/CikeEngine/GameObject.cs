@@ -12,29 +12,38 @@ namespace Cike.CikeEngine
     {
         public Transform transform = new Transform();
         public Shape2D shape = new Sprite2D();
+        public List<Script> scripts = new List<Script>();
+
+        public void InitializeScripts()
+        {
+            foreach (Script script in this.scripts)
+            {
+                script.gameObject = this;
+            }
+
+            foreach (Script script in this.scripts)
+            {
+                script.PassFunctionsToEngine();
+            }
+        }
+
         public GameObject()
         {
-            CikeEngine.AddGameObject(this);
+
         }
         public GameObject(Shape2D shape)
         {
             this.shape = shape;
-
-            CikeEngine.AddGameObject(this);
         }
         public GameObject(Vector2D position, Shape2D shape)
         {
             this.transform.position = position;
             this.shape = shape;
-
-            CikeEngine.AddGameObject(this);
         }
         public GameObject(Transform transform, Shape2D shape)
         {
             this.transform = transform;
             this.shape = shape;
-
-            CikeEngine.AddGameObject(this);
         }
         public void Draw(Graphics g)
         {
@@ -51,6 +60,12 @@ namespace Cike.CikeEngine
             {
                 (this.shape as IDisposable).Dispose();
             }
+
+            foreach (Script script in this.scripts)
+            {
+                script.RemoveFunctionsFromEngine();
+            }
+
             CikeEngine.RemoveGameObject(this);
         }
     }

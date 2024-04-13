@@ -34,10 +34,23 @@ namespace Cike.CikeEngine
 
         public static List<Script> scripts = new List<Script>();
 
-        public CikeEngine(Vector2D screenSize, string title)
+        public static Scene currentScene = null;
+
+        public static void ChangeScene(Scene scene)
+        {
+            if (currentScene != null)
+            {
+                currentScene.Destroy();
+            }
+            currentScene = scene;
+            currentScene.Initialize();
+        }
+
+        public CikeEngine(Vector2D screenSize, string title, Scene scene)
         {
             this.screenSize = screenSize;
             this.title = title;
+            ChangeScene(scene);
 
             this.window = new Canvas();
             window.Size = new Size((int)screenSize.x, (int)screenSize.y);
@@ -47,6 +60,8 @@ namespace Cike.CikeEngine
             window.FormBorderStyle = FormBorderStyle.FixedSingle;
             window.MaximizeBox = false;
 
+            window.FormClosed += (sender, e) => { Environment.Exit(0); };
+
             window.MouseMove += Input.MouseMoveInputEvent;
             window.MouseDown += Input.MouseButtonDownInputEvent;
             window.MouseUp += Input.MouseButtonUpInputEvent;
@@ -54,11 +69,6 @@ namespace Cike.CikeEngine
             window.KeyUp += Input.KeyboardButtonUpEvent;
 
             scripts = ReflectiveEnumerator.GetEnumerableOfType<Script>().ToList();
-
-            foreach (Script script in scripts)
-            {
-                script.PassFunctionsToEngine(); // Look up the Script class (method to pass the OnLoad, OnUpdate and OnDraw methods)
-            }
 
             gameLoopThread = new Thread(GameLoop);
             gameLoopThread.Start();
@@ -137,6 +147,21 @@ namespace Cike.CikeEngine
             onDraw += onDrawVoid;
         }
 
+        public static void RemoveOnLoad(OnLoad onLoadVoid)
+        {
+            onLoad -= onLoadVoid;
+        }
+
+        public static void RemoveOnUpdate(OnUpdate onUpdateVoid)
+        {
+            onUpdate -= onUpdateVoid;
+        }
+
+        public static void RemoveOnDraw(OnDraw onDrawVoid)
+        {
+            onDraw -= onDrawVoid;
+        }
+
         public static GameObject CreateGameObject()
         {
             GameObject obj = new GameObject();
@@ -167,11 +192,13 @@ namespace Cike.CikeEngine
         public static void AddGameObject(GameObject obj)
         {
             gameObjects.Add(obj);
+            Console.WriteLine($"Added GO; GOs: {gameObjects.Count()}");
         }
 
         public static void RemoveGameObject(GameObject obj)
         {
             gameObjects.Remove(obj);
+            Console.WriteLine($"Removed GO; GOs: {gameObjects.Count()}");
         }
     }
 
