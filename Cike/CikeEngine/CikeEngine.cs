@@ -53,22 +53,37 @@ namespace Cike.CikeEngine
             window.KeyDown += Input.KeyboardButtonDownEvent;
             window.KeyUp += Input.KeyboardButtonUpEvent;
 
-            scripts = ReflectiveEnumerator.GetEnumerableOfType<Script>().ToList();
+            
+        }
 
-            foreach (Script script in scripts)
-            {
-                script.PassFunctionsToEngine(); // Look up the Script class (method to pass the OnLoad, OnUpdate and OnDraw methods)
-            }
-
+        public void Run()
+        {
             gameLoopThread = new Thread(GameLoop);
             gameLoopThread.Start();
-
             Application.Run(window);
+        }
+
+        public void passScript(Script script)
+        {
+            scripts.Add(script);
+            script.PassFunctionsToEngine();
+        }
+
+        public static void RevokeScript(Script script)
+        {
+            scripts.Remove(script);
+            onLoad -= script.OnLoad;
+            onUpdate -= script.OnUpdate;
+            onDraw -= script.OnDraw;
         }
 
         void GameLoop()
         {
-            onLoad();
+            try
+            {
+                onLoad();
+            }
+            catch { }
             DateTime startTime = DateTime.Now;
             while (gameLoopThread.IsAlive)
             {

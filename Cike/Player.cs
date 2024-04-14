@@ -48,6 +48,16 @@ namespace Cike
             {
                 movement.x += 1;
             }
+
+            if(Input.MouseButtonDown(MouseButtons.Left))
+            {
+                GameObject projectile = new GameObject(new Vector2D(player.transform.position.x, player.transform.position.y), new Sprite2D());
+                projectile.transform.scale = new Vector2D(16, 16);
+                projectile.transform.rotation = player.transform.rotation;
+                Projectile p = new Projectile(projectile);
+                p.PassFunctionsToEngine();
+            }
+
             movement = movement.Normaize();
             Vector2D prevPos = player.transform.position;
             player.transform.position += movement * TestGame.deltaTime;
@@ -55,10 +65,9 @@ namespace Cike
             float speed = (newPos - prevPos).Magnitude();
             Vector2D mousePos = Input.GetLocalMousePos();
             float angle = (float)(Math.Atan2(mousePos.y - player.transform.position.y, mousePos.x - player.transform.position.x) * 180 / Math.PI);
-            Console.WriteLine(angle);
             player.transform.rotation = angle;
-            Console.WriteLine(speed);
-            float fps = 1 / TestGame.deltaTime * 1000;
+
+            Console.WriteLine($"Objects: {TestGame.gameObjects.Count()}, Scripts: {TestGame.scripts.Count()}");
         }
     }
 }
