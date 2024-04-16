@@ -11,7 +11,7 @@ using System.Reflection;
 
 namespace Cike.CikeEngine
 {
-    class Canvas : Form
+    public class Canvas : Form
     {
         public Canvas()
         {
@@ -28,7 +28,8 @@ namespace Cike.CikeEngine
         public Color backgroundColor = Color.White;
 
         public static float deltaTime = 0;
-        
+
+        public static Input input = null;
 
         public static List<GameObject> gameObjects = new List<GameObject>();
 
@@ -47,13 +48,9 @@ namespace Cike.CikeEngine
             window.FormBorderStyle = FormBorderStyle.FixedSingle;
             window.MaximizeBox = false;
 
-            window.MouseMove += Input.MouseMoveInputEvent;
-            window.MouseDown += Input.MouseButtonDownInputEvent;
-            window.MouseUp += Input.MouseButtonUpInputEvent;
-            window.KeyDown += Input.KeyboardButtonDownEvent;
-            window.KeyUp += Input.KeyboardButtonUpEvent;
+            input = new Input(window);
 
-            
+        
         }
 
         public void Run()
@@ -95,6 +92,7 @@ namespace Cike.CikeEngine
                     TimeSpan timeSpan = endTime - startTime;
                     deltaTime = (float)timeSpan.TotalMilliseconds;
                     onUpdate();
+                    input.OnUpdate();
                     startTime = DateTime.Now;
                     Thread.Sleep(1);
                 }

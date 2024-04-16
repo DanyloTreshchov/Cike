@@ -12,9 +12,9 @@ namespace Cike
     {
         public GameObject player = new GameObject();
 
-        public int i = 0;
+        public GameObject platform = new GameObject();
 
-        CikeEngine.Input input = new CikeEngine.Input();
+        public int i = 0;
 
         public override void OnDraw()
         {
@@ -26,36 +26,42 @@ namespace Cike
             Console.WriteLine("Loaded");
             player.transform.scale = new Vector2D(32, 32);
             player.transform.position = new Vector2D(0, 256);
+
+            platform.transform.scale = new Vector2D(512, 32);
+            platform.transform.position = new Vector2D(256, 480);
         }
+
+        public int count = 0;
 
         public override void OnUpdate()
         {
             Vector2D movement = new Vector2D();
 
-            if (Input.KeyButtonDown(Keys.W))
+            if (TestGame.input.GetKeyPressed(Keys.W))
             {
                 movement.y -= 1;
             }
-            if (Input.KeyButtonDown(Keys.S))
+            if (TestGame.input.GetKeyPressed(Keys.S))
             {
                 movement.y += 1;
             }
-            if (Input.KeyButtonDown(Keys.A))
+            if (TestGame.input.GetKeyPressed(Keys.A))
             {
                 movement.x -= 1;
             }
-            if (Input.KeyButtonDown(Keys.D))
+            if (TestGame.input.GetKeyPressed(Keys.D))
             {
                 movement.x += 1;
             }
 
-            if(Input.MouseButtonDown(MouseButtons.Left))
+            if(TestGame.input.GetKeyDown(Keys.Space))
             {
                 GameObject projectile = new GameObject(new Vector2D(player.transform.position.x, player.transform.position.y), new Sprite2D());
                 projectile.transform.scale = new Vector2D(16, 16);
                 projectile.transform.rotation = player.transform.rotation;
                 Projectile p = new Projectile(projectile);
                 p.PassFunctionsToEngine();
+                Console.WriteLine(count++);
             }
 
             movement = movement.Normaize();
@@ -63,11 +69,11 @@ namespace Cike
             player.transform.position += movement * TestGame.deltaTime;
             Vector2D newPos = player.transform.position;
             float speed = (newPos - prevPos).Magnitude();
-            Vector2D mousePos = Input.GetLocalMousePos();
+            Vector2D mousePos = TestGame.input.GetMousePosition() == null ? new Vector2D() : TestGame.input.GetMousePosition();
             float angle = (float)(Math.Atan2(mousePos.y - player.transform.position.y, mousePos.x - player.transform.position.x) * 180 / Math.PI);
             player.transform.rotation = angle;
 
-            Console.WriteLine($"Objects: {TestGame.gameObjects.Count()}, Scripts: {TestGame.scripts.Count()}");
+            //Console.WriteLine($"Objects: {TestGame.gameObjects.Count()}, Scripts: {TestGame.scripts.Count()}");
         }
     }
 }

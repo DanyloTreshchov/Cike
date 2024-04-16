@@ -49,9 +49,11 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="CikeEngine\Circle2D.cs" />
+    <Compile Include="CikeEngine\Collider2D.cs" />
     <Compile Include="CikeEngine\GameObject.cs" />
     <Compile Include="CikeEngine\Input.cs" />
     <Compile Include="CikeEngine\Line2D.cs" />
+    <Compile Include="CikeEngine\Polygon.cs" />
     <Compile Include="CikeEngine\Script.cs" />
     <Compile Include="CikeEngine\Shape2D.cs" />
     <Compile Include="CikeEngine\Sprite2D.cs" />

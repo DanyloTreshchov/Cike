@@ -12,6 +12,7 @@ namespace Cike.CikeEngine
     {
         public Transform transform = new Transform();
         public Shape2D shape = new Sprite2D();
+        public Collider2D collider = null;
         public GameObject()
         {
             CikeEngine.AddGameObject(this);

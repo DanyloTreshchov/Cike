@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -7,59 +8,134 @@ using System.Windows.Forms;
 
 namespace Cike.CikeEngine
 {
-    internal class Input
+    public class Input : Script
     {
-        private static string KeyboardState = "";
+        private Dictionary<Keys, bool> keyStates = new Dictionary<Keys, bool>();
+        private Dictionary<Keys, bool> previousKeyStates = new Dictionary<Keys, bool>();
+        private Vector2D mousePosition;
+        private Dictionary<MouseButtons, bool> mouseButtonStates = new Dictionary<MouseButtons, bool>();
+        private Dictionary<MouseButtons, bool> previousMouseButtonStates = new Dictionary<MouseButtons, bool>();
 
-        private static string MouseButtonsState = "";
-
-        private static Vector2D LocalMousePosition = new Vector2D();
-
-        //Returinig Inputs
-
-        public static Vector2D GetLocalMousePos()
+        public Input(Form form)
         {
-            return LocalMousePosition;
+            form.KeyDown += OnKeyDown;
+            form.KeyUp += OnKeyUp;
+            form.MouseMove += OnMouseMove;
+            form.MouseDown += OnMouseDown;
+            form.MouseUp += OnMouseUp;
+
+            // Initialize key states
+            foreach (Keys key in Enum.GetValues(typeof(Keys)))
+            {
+                keyStates[key] = false;
+                previousKeyStates[key] = false;
+            }
+
+            // Initialize mouse button states
+            foreach (MouseButtons button in Enum.GetValues(typeof(MouseButtons)))
+            {
+                mouseButtonStates[button] = false;
+                previousMouseButtonStates[button] = false;
+            }
         }
 
-        public static bool MouseButtonDown(MouseButtons button)
+        private void OnKeyDown(object sender, KeyEventArgs e)
         {
-            return MouseButtonsState.Contains(button.ToString() + '$');
+            keyStates[e.KeyCode] = true;
         }
 
-        public static bool KeyButtonDown(Keys key)
+        private void OnKeyUp(object sender, KeyEventArgs e)
         {
-            return KeyboardState.Contains(key.ToString() + '$');
+            keyStates[e.KeyCode] = false;
         }
 
-        //Getting Inputs
-        public static void MouseMoveInputEvent(object sender, MouseEventArgs e)
+        private void OnMouseMove(object sender, MouseEventArgs e)
         {
-            LocalMousePosition = new Vector2D(e.Location.X, e.Location.Y);
+            mousePosition = new Vector2D(e.Location.X, e.Location.Y);
         }
 
-        public static void MouseButtonDownInputEvent(object sender, MouseEventArgs e)
+        private void OnMouseDown(object sender, MouseEventArgs e)
         {
-            MouseButtonsState += e.Button.ToString() + '$';
-            Console.WriteLine($"{e.Button.ToString()} was pressed! MouseButtonsState: {MouseButtonsState}");
+            mouseButtonStates[e.Button] = true;
         }
 
-        public static void MouseButtonUpInputEvent(object sender, MouseEventArgs e)
+        private void OnMouseUp(object sender, MouseEventArgs e)
         {
-            MouseButtonsState = MouseButtonsState.Remove(MouseButtonsState.IndexOf(e.Button.ToString() + '$'), e.Button.ToString().Length + 1);
-            Console.WriteLine($"{e.Button.ToString()} was released! MouseButtonsState: {MouseButtonsState}, index {MouseButtonsState.IndexOf(e.Button.ToString())}, length {e.Button.ToString().Length}");
+            mouseButtonStates[e.Button] = false;
         }
 
-        public static void KeyboardButtonDownEvent(object sebder, KeyEventArgs e)
+        public bool GetKeyDown(Keys key)
         {
-            KeyboardState += KeyboardState.Contains(e.KeyCode.ToString() + '$') ? null : e.KeyCode.ToString() + '$';
-            Console.WriteLine($"{e.KeyCode.ToString()} was pressed! KeyboardButtonsState: {KeyboardState}");
+            bool pressed = keyStates[key] && !previousKeyStates[key];
+            previousKeyStates[key] = keyStates[key];
+            return pressed;
         }
 
-        public static void KeyboardButtonUpEvent(object sebder, KeyEventArgs e)
+        public bool GetKeyUp(Keys key)
         {
-            KeyboardState = KeyboardState.Remove(KeyboardState.IndexOf(e.KeyCode.ToString() + '$'), e.KeyCode.ToString().Length + 1);
-            Console.WriteLine($"{e.KeyCode.ToString()} was released! MouseButtonsState: {KeyboardState}, index {KeyboardState.IndexOf(e.KeyCode.ToString())}, length {e.KeyCode.ToString().Length}");
+            bool released = !keyStates[key] && previousKeyStates[key];
+            previousKeyStates[key] = keyStates[key];
+            return released;
+        }
+
+        public bool GetKeyPressed(Keys key)
+        {
+            return keyStates[key];
+        }
+
+        public bool GetMouseButtonDown(MouseButtons button)
+        {
+            bool pressed = mouseButtonStates[button] && !previousMouseButtonStates[button];
+            previousMouseButtonStates[button] = mouseButtonStates[button];
+            return pressed;
+        }
+
+        public bool GetMouseButtonUp(MouseButtons button)
+        {
+            bool released = !mouseButtonStates[button] && previousMouseButtonStates[button];
+            previousMouseButtonStates[button] = mouseButtonStates[button];
+            return released;
+        }
+
+        public bool GetMouseButtonPressed(MouseButtons button)
+        {
+            return mouseButtonStates[button];
+        }
+
+        public Vector2D GetMousePosition()
+        {
+            return mousePosition;
+        }
+
+        public override void OnUpdate()
+        {
+            
+            foreach (var kvp in keyStates)
+            {
+                previousKeyStates[kvp.Key] = kvp.Value;
+            }
+
+            // Update previous mouse button states
+            foreach (var kvp in mouseButtonStates)
+            {
+                previousMouseButtonStates[kvp.Key] = kvp.Value;
+            }
+        }
+
+        public override void OnDraw()
+        {
+
+        }
+
+        public override void OnLoad()
+        {
+
+        }
+
+        public override void PassFunctionsToEngine()
+        {
+            base.PassFunctionsToEngine();
+            
         }
     }
 }

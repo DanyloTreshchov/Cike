@@ -39,6 +39,12 @@ namespace Cike.CikeEngine
         {
             position += translation;
         }
+
+        public Vector2D Forward()
+        {
+            return new Vector2D((float)Math.Cos(rotation * Math.PI / 180), (float)Math.Sin(rotation * Math.PI / 180));
+        }
+
         public void Scale(Vector2D scale) { this.scale *= scale; }
         public void Scale(float scale) { this.scale *= scale; }
         public void Rotate(float rotation) { this.rotation += rotation; }
