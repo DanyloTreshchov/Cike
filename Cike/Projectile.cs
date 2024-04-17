@@ -11,10 +11,12 @@ namespace Cike
     public class Projectile : Script
     {
         GameObject projectile = null;
+   
 
         public Projectile(GameObject projectile)
         {
             this.projectile = projectile;
+            this.projectile.collider = new Collider2D(this.projectile);
         }
 
         void Destroy()
@@ -47,7 +49,15 @@ namespace Cike
             {
                 projectile.transform.position += new Vector2D((float)Math.Cos(projectile.transform.rotation * Math.PI / 180), (float)Math.Sin(projectile.transform.rotation * Math.PI / 180)) * 5 * TestGame.deltaTime;
             }
-            checkBounds();
+            List<GameObject> gameObjects = projectile.collider.Colliding();
+            foreach(GameObject gameObject in gameObjects)
+            {
+                if(gameObject != projectile)
+                {
+                    Console.WriteLine("Colliding");
+                    Destroy();
+                }
+            }
         }
     }
 }

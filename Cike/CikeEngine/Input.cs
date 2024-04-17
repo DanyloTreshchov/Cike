@@ -67,14 +67,14 @@ namespace Cike.CikeEngine
         public bool GetKeyDown(Keys key)
         {
             bool pressed = keyStates[key] && !previousKeyStates[key];
-            previousKeyStates[key] = keyStates[key];
+            //previousKeyStates[key] = keyStates[key];
             return pressed;
         }
 
         public bool GetKeyUp(Keys key)
         {
             bool released = !keyStates[key] && previousKeyStates[key];
-            previousKeyStates[key] = keyStates[key];
+            //previousKeyStates[key] = keyStates[key];
             return released;
         }
 
@@ -86,14 +86,14 @@ namespace Cike.CikeEngine
         public bool GetMouseButtonDown(MouseButtons button)
         {
             bool pressed = mouseButtonStates[button] && !previousMouseButtonStates[button];
-            previousMouseButtonStates[button] = mouseButtonStates[button];
+            //previousMouseButtonStates[button] = mouseButtonStates[button];
             return pressed;
         }
 
         public bool GetMouseButtonUp(MouseButtons button)
         {
             bool released = !mouseButtonStates[button] && previousMouseButtonStates[button];
-            previousMouseButtonStates[button] = mouseButtonStates[button];
+            //previousMouseButtonStates[button] = mouseButtonStates[button];
             return released;
         }
 
@@ -104,7 +104,7 @@ namespace Cike.CikeEngine
 
         public Vector2D GetMousePosition()
         {
-            return mousePosition;
+            return mousePosition != null ? mousePosition : new Vector2D();
         }
 
         public override void OnUpdate()

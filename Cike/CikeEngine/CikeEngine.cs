@@ -106,6 +106,11 @@ namespace Cike.CikeEngine
         private void Renderer(object sender, PaintEventArgs e)
         {
             Graphics g = e.Graphics;
+
+            g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.None;
+            g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
+            g.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.Half;
+
             g.Clear(backgroundColor);
 
             List<GameObject> tempGameObjects;
